@@ -168,16 +168,36 @@ public final class LexicalAnalysis {
 		return result;
 	}
 
+	/**
+	 * Returns input function lexeme.
+	 * 
+	 * @param input Function to be converted.
+	 * @return F + function code or null if there is no such function in table.
+	 */
 	private String addFunction(String input) {
 		return "F" + functions.searchKey(input.toUpperCase()) + SPACE;
 	}
 
+	/**
+	 * Searches table for a character constant and returns it's represent.
+	 * 
+	 * @param input Character constant to be converted.
+	 * @return C + constant code.
+	 * @throws IOException Throws an exception, if no constants were found.
+	 */
 	private String addConstant(String input) throws IOException {
 		if (!charConstants.contains(input))
 			throw new IOException("There is no such constant as: " + input);
 		return "C" + charConstants.searchKey(input) + SPACE;
 	}
 
+	/**
+	 * Adds input identifier to identifier table if not already added and then
+	 * returns it's represent.
+	 * 
+	 * @param input Identifier to be added/searched for.
+	 * @return I + identifier's represent.
+	 */
 	private String addIdentifier(String input) {
 		if (!identifiers.contains(input)) {
 			int index = identifiers.size();
@@ -186,32 +206,71 @@ public final class LexicalAnalysis {
 		return "I" + identifiers.searchKey(input) + SPACE;
 	}
 
+	/**
+	 * Returns input separator lexeme.
+	 * 
+	 * @param input Separator to be converted.
+	 * @return S + separator code or null if there is no such separator in table.
+	 */
 	private String addSeparator(char input) {
 		return "S" + separators.searchKey(input) + SPACE;
 	}
 
+	/**
+	 * Adds number constant to the table and returns it's lexeme.
+	 * 
+	 * @param number Input number to be added.
+	 * @return N + number code.
+	 */
 	private String addNumber(String number) {
 		int index = numberConstants.size();
 		numberConstants.put(index, Float.parseFloat(number));
 		return "N" + index + SPACE;
 	}
 
+	/**
+	 * Searches for multiply lexeme and returns it.
+	 * 
+	 * @return Multiply operation lexeme.
+	 */
 	private String addMultiplyLexeme() {
 		return addOperation("*");
 	}
 
+	/**
+	 * Returns input operation lexeme.
+	 * 
+	 * @param input Operation to be converted.
+	 * @return O + operation code or null if there is no such operation in table.
+	 */
 	private String addOperation(String input) {
 		return "O" + operations.searchKey(input) + SPACE;
 	}
 
+	/**
+	 * Checks whether input character is an operation or not.
+	 * 
+	 * @param input Character to be checked.
+	 * @return True if input character is an operation. Otherwise false.
+	 */
 	private boolean isOperation(char input) {
 		return (operations.containsValue(Character.toString(input)));
 	}
 
+	/**
+	 * Checks whether input character is a separator or not.
+	 * 
+	 * @param input Character to be checked.
+	 * @return True if input character is a separator. Otherwise false.
+	 */
 	private boolean isSeparator(char input) {
 		return (separators.containsValue(input));
 	}
 
+	/**
+	 * Initiates tables with start values.
+	 * TODO: Add SQL.
+	 */
 	private void initTables() {
 		int i = 0;
 
