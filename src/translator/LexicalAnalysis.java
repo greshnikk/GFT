@@ -9,10 +9,13 @@ package translator;
  * @since 2014-05-28
  */
 public class LexicalAnalysis {
-	private HashTableExt<Integer, String> operationTable = new HashTableExt<Integer, String>();
-	private HashTableExt<Integer, Character> separatorTable = new HashTableExt<Integer, Character>();
-	private HashTableExt<Integer, Integer> constantTable = new HashTableExt<Integer, Integer>();
-	private HashTableExt<Integer, String> keywordTable = new HashTableExt<Integer, String>();
+	//private HashTableExt<>
+	
+	
+	private HashtableExt<Integer, String> operationTable = new HashtableExt<Integer, String>();
+	private HashtableExt<Integer, Character> separatorTable = new HashtableExt<Integer, Character>();
+	private HashtableExt<Integer, Integer> constantTable = new HashtableExt<Integer, Integer>();
+	private HashtableExt<Integer, String> keywordTable = new HashtableExt<Integer, String>();
 	
 	public LexicalAnalysis() {
 		initTables();
