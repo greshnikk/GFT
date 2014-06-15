@@ -12,7 +12,7 @@ public class LexicalAnalysisTest {
 		assertTrue(tester
 				.convert(
 						"2X1^2 - ( 3+ 2)X2^2 -333.1415X1X2e^2X1sin(X1) + 0.17E-27*PI*lg(10)+ 12E13")
-				.equals("N0 O2 I0 O4 N1 S3 O1 S3 S0 S3 N2 O0 S3 N3 S1 I1 O4 N4 S3 O1 N5 O2 I0 O2 I1 O2 C1 O4 N6 O2 I0 O2 F12 S0 I0 S1 S3 O0 S3 N7 O2 C0 O2 F4 S0 N8 S1 O0 S3 N9 "));
+				.equals("N0 O3 I0 O5 N1 S4 O2 S4 S1 S4 N2 O1 S4 N3 S2 I1 O5 N4 S4 O2 N5 O3 I0 O3 I1 O3 C2 O5 N6 O3 I0 O3 F13 S1 I0 S2 S4 O1 S4 N7 O3 C1 O3 F5 S1 N8 S2 O1 S4 N9 "));
 	}
 
 }
