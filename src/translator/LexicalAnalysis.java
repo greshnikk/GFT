@@ -5,6 +5,10 @@
 package translator;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * @author Greshnikk
@@ -22,7 +26,7 @@ public final class LexicalAnalysis {
 	private final static String EMPTY_STRING = "";
 	private final static String SPACE = " ";
 
-	public LexicalAnalysis() {
+	public LexicalAnalysis() throws Exception {
 		initTables();
 	}
 
@@ -141,7 +145,7 @@ public final class LexicalAnalysis {
 					result += addMultiplyLexeme();
 				continue;
 			}
-			if (Character.isLetter(currentChar)) {				
+			if (Character.isLetter(currentChar)) {
 				do {
 					currentLexeme += currentChar;
 					if (++i >= length) {
@@ -171,7 +175,8 @@ public final class LexicalAnalysis {
 	/**
 	 * Returns input function lexeme.
 	 * 
-	 * @param input Function to be converted.
+	 * @param input
+	 *            Function to be converted.
 	 * @return F + function code or null if there is no such function in table.
 	 */
 	private String addFunction(String input) {
@@ -181,9 +186,11 @@ public final class LexicalAnalysis {
 	/**
 	 * Searches table for a character constant and returns it's represent.
 	 * 
-	 * @param input Character constant to be converted.
+	 * @param input
+	 *            Character constant to be converted.
 	 * @return C + constant code.
-	 * @throws IOException Throws an exception, if no constants were found.
+	 * @throws IOException
+	 *             Throws an exception, if no constants were found.
 	 */
 	private String addConstant(String input) throws IOException {
 		if (!charConstants.contains(input))
@@ -195,7 +202,8 @@ public final class LexicalAnalysis {
 	 * Adds input identifier to identifier table if not already added and then
 	 * returns it's represent.
 	 * 
-	 * @param input Identifier to be added/searched for.
+	 * @param input
+	 *            Identifier to be added/searched for.
 	 * @return I + identifier's represent.
 	 */
 	private String addIdentifier(String input) {
@@ -209,8 +217,10 @@ public final class LexicalAnalysis {
 	/**
 	 * Returns input separator lexeme.
 	 * 
-	 * @param input Separator to be converted.
-	 * @return S + separator code or null if there is no such separator in table.
+	 * @param input
+	 *            Separator to be converted.
+	 * @return S + separator code or null if there is no such separator in
+	 *         table.
 	 */
 	private String addSeparator(char input) {
 		return "S" + separators.searchKey(input) + SPACE;
@@ -219,7 +229,8 @@ public final class LexicalAnalysis {
 	/**
 	 * Adds number constant to the table and returns it's lexeme.
 	 * 
-	 * @param number Input number to be added.
+	 * @param number
+	 *            Input number to be added.
 	 * @return N + number code.
 	 */
 	private String addNumber(String number) {
@@ -240,8 +251,10 @@ public final class LexicalAnalysis {
 	/**
 	 * Returns input operation lexeme.
 	 * 
-	 * @param input Operation to be converted.
-	 * @return O + operation code or null if there is no such operation in table.
+	 * @param input
+	 *            Operation to be converted.
+	 * @return O + operation code or null if there is no such operation in
+	 *         table.
 	 */
 	private String addOperation(String input) {
 		return "O" + operations.searchKey(input) + SPACE;
@@ -250,7 +263,8 @@ public final class LexicalAnalysis {
 	/**
 	 * Checks whether input character is an operation or not.
 	 * 
-	 * @param input Character to be checked.
+	 * @param input
+	 *            Character to be checked.
 	 * @return True if input character is an operation. Otherwise false.
 	 */
 	private boolean isOperation(char input) {
@@ -260,7 +274,8 @@ public final class LexicalAnalysis {
 	/**
 	 * Checks whether input character is a separator or not.
 	 * 
-	 * @param input Character to be checked.
+	 * @param input
+	 *            Character to be checked.
 	 * @return True if input character is a separator. Otherwise false.
 	 */
 	private boolean isSeparator(char input) {
@@ -268,53 +283,58 @@ public final class LexicalAnalysis {
 	}
 
 	/**
-	 * Initiates tables with start values.
-	 * TODO: Add SQL.
+	 * Initiates tables with start values using stored SQL database.
 	 */
-	private void initTables() {
-		int i = 0;
+	private void initTables() throws Exception {
+		initStringTable("select * from GMOGA.operations", operations);
+		initCharTable("select * from GMOGA.separators", separators);
+		initStringTable("select * from GMOGA.constants", charConstants);
+		initStringTable("select * from GMOGA.functions", functions);
+	}
 
-		// Init operation table
-		operations.put(i++, "+");
-		operations.put(i++, "-");
-		operations.put(i++, "*");
-		operations.put(i++, "/");
-		operations.put(i++, "^");
-		operations.put(i++, "=");
-		operations.put(i++, "<");
-		operations.put(i++, ">");
-		operations.put(i++, "<>");
-		operations.put(i++, "<=");
-		operations.put(i++, ">=");
+	/**
+	 * Initiates String table with values from stored SQL database
+	 * 
+	 * @param sqlQuery SQL query select string
+	 * @param table table to be filled
+	 * @throws Exception
+	 */
+	private void initStringTable(String sqlQuery,
+			HashtableExt<Integer, String> table) throws Exception {
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
 
-		// Init separator table
-		i = 0;
-		separators.put(i++, '(');
-		separators.put(i++, ')');
-		separators.put(i++, '|');
-		separators.put(i++, ' ');
+		Class.forName("com.mysql.jdbc.Driver");
+		connect = DriverManager.getConnection("jdbc:mysql://localhost/GMOGA?"
+				+ "user=greshnikk&password=46w5w54s6");
+		statement = connect.createStatement();
+		resultSet = statement.executeQuery(sqlQuery);
+		while (resultSet.next()) {
+			table.put(resultSet.getInt(1), resultSet.getString(2));
+		}
+	}
 
-		// Init string constants table
-		i = 0;
-		charConstants.put(i++, "PI");
-		charConstants.put(i++, "e");
-		
-		i = 0;
-		functions.put(i++, "ABS");
-		functions.put(i++, "COS");
-		functions.put(i++, "EXP");
-		functions.put(i++, "LN");
-		functions.put(i++, "LG");
-		functions.put(i++, "MAX");
-		functions.put(i++, "MIN");
-		functions.put(i++, "N");
-		functions.put(i++, "POWER");
-		functions.put(i++, "R");
-		functions.put(i++, "ROOT");
-		functions.put(i++, "SIGN");
-		functions.put(i++, "SIN");
-		functions.put(i++, "SQR");
-		functions.put(i++, "SQRT");
-		functions.put(i++, "TAN");
+	/**
+	 * Initiates Character table with values from stored SQL database.
+	 * 
+	 * @param sqlQuery SQL query select string
+	 * @param table table to be filled
+	 * @throws Exception
+	 */
+	private void initCharTable(String sqlQuery,
+			HashtableExt<Integer, Character> table) throws Exception {
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+
+		Class.forName("com.mysql.jdbc.Driver");
+		connect = DriverManager.getConnection("jdbc:mysql://localhost/GMOGA?"
+				+ "user=greshnikk&password=46w5w54s6");
+		statement = connect.createStatement();
+		resultSet = statement.executeQuery(sqlQuery);
+		while (resultSet.next()) {
+			table.put(resultSet.getInt(1), resultSet.getString(2).charAt(0));
+		}
 	}
 }
