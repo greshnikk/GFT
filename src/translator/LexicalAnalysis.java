@@ -48,10 +48,14 @@ public final class LexicalAnalysis {
 		String result = EMPTY_STRING;
 		String currentLexeme = EMPTY_STRING;
 		char currentChar;
-		int length = input.length();
+		int length;
 
 		if (input.isEmpty())
 			return EMPTY_STRING;
+		
+		//Removing all whitespaces because we don't need them.
+		input = input.replaceAll("\\s", "");
+		length = input.length();
 
 		currentChar = input.charAt(0);
 		for (int i = 0; i < length;) {
