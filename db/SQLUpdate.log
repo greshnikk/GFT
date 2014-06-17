@@ -1,0 +1,15 @@
+17.06.2014 19.52.15 
+dbVersion: 0.0.0 
+Backing up database.....Msg 911, Level 16, State 11, Server SKYNET, Line 1
+Database 'GMOGA' does not exist. Make sure that the name is entered correctly.
+Msg 3013, Level 16, State 1, Server SKYNET, Line 1
+BACKUP DATABASE is terminating abnormally.
+Success 
+Applying 1.X.X\01.00.0000.sql.....Msg 911, Level 16, State 1, Server SKYNET, Line 1
+Database 'GMOGA' does not exist. Make sure that the name is entered correctly.
+Restoring up database.....Msg 3201, Level 16, State 2, Server SKYNET, Line 1
+Cannot open backup device 'D:\FTP\Projects\GFT\db\17.06.2014_19.52.15.bak'. Operating system error 2(The system cannot find the file specified.).
+Msg 3013, Level 16, State 1, Server SKYNET, Line 1
+RESTORE DATABASE is terminating abnormally.
+Success 
+ 
