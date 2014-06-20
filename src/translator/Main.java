@@ -17,6 +17,7 @@ public class Main {
 			//*** END OF HOTFIX ***//
 			
 			String b = test2.convert(a);
+			
 		} catch (NumberFormatException e) {
 			Main.log("Wrong number format. " + e.getMessage());
 		} catch (Exception e) {

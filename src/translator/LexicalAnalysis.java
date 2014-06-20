@@ -5,10 +5,6 @@
 package translator;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 /**
  * @author Greshnikk
@@ -28,6 +24,14 @@ public final class LexicalAnalysis {
 
 	public LexicalAnalysis() throws Exception {
 		initTables();
+	}
+
+	private void initTables() throws Exception {
+		GFT.initTables();
+		this.charConstants = GFT.getCharTable();
+		this.operations = GFT.getOperationsTable();
+		this.separators = GFT.getSeparatorsTable();
+		this.functions = GFT.getFunctionsTable();
 	}
 
 	/**
@@ -52,8 +56,8 @@ public final class LexicalAnalysis {
 
 		if (input.isEmpty())
 			return EMPTY_STRING;
-		
-		//Removing all whitespaces because we don't need them.
+
+		// Removing all whitespaces because we don't need them.
 		input = input.replaceAll("\\s", "");
 		length = input.length();
 
@@ -65,6 +69,8 @@ public final class LexicalAnalysis {
 					if (++i >= length) {
 						result += addNumber(currentLexeme);
 						Main.log(result);
+						GFT.setIdentifiersTable(this.identifiers);
+						GFT.setNumberTable(this.numberConstants);
 						return result;
 					}
 					currentChar = input.charAt(i);
@@ -96,6 +102,8 @@ public final class LexicalAnalysis {
 				result += addSeparator(currentChar);
 				if (++i >= length) {
 					Main.log(result);
+					GFT.setIdentifiersTable(this.identifiers);
+					GFT.setNumberTable(this.numberConstants);
 					return result;
 				}
 				currentChar = input.charAt(i);
@@ -116,6 +124,8 @@ public final class LexicalAnalysis {
 					result += addOperation(currentLexeme);
 					if (++i >= length) {
 						Main.log(result);
+						GFT.setIdentifiersTable(this.identifiers);
+						GFT.setNumberTable(this.numberConstants);
 						return result;
 					}
 				} else
@@ -139,6 +149,8 @@ public final class LexicalAnalysis {
 						if (++i >= length) {
 							result += addIdentifier(currentLexeme);
 							Main.log(result);
+							GFT.setIdentifiersTable(this.identifiers);
+							GFT.setNumberTable(this.numberConstants);
 							return result;
 						}
 						currentChar = input.charAt(i);
@@ -173,6 +185,8 @@ public final class LexicalAnalysis {
 			}
 		}
 		Main.log(result);
+		GFT.setIdentifiersTable(this.identifiers);
+		GFT.setNumberTable(this.numberConstants);
 		return result;
 	}
 
@@ -284,61 +298,5 @@ public final class LexicalAnalysis {
 	 */
 	private boolean isSeparator(char input) {
 		return (separators.containsValue(input));
-	}
-
-	/**
-	 * Initiates tables with start values using stored SQL database.
-	 */
-	private void initTables() throws Exception {
-		initStringTable("select * from GMOGA.operations", operations);
-		initCharTable("select * from GMOGA.separators", separators);
-		initStringTable("select * from GMOGA.constants", charConstants);
-		initStringTable("select * from GMOGA.functions", functions);
-	}
-
-	/**
-	 * Initiates String table with values from stored SQL database
-	 * 
-	 * @param sqlQuery SQL query select string
-	 * @param table table to be filled
-	 * @throws Exception
-	 */
-	private void initStringTable(String sqlQuery,
-			HashtableExt<Integer, String> table) throws Exception {
-		Connection connect = null;
-		Statement statement = null;
-		ResultSet resultSet = null;
-
-		Class.forName("com.mysql.jdbc.Driver");
-		connect = DriverManager.getConnection("jdbc:mysql://localhost/GMOGA?"
-				+ "user=greshnikk&password=46w5w54s6");
-		statement = connect.createStatement();
-		resultSet = statement.executeQuery(sqlQuery);
-		while (resultSet.next()) {
-			table.put(resultSet.getInt(1), resultSet.getString(2));
-		}
-	}
-
-	/**
-	 * Initiates Character table with values from stored SQL database.
-	 * 
-	 * @param sqlQuery SQL query select string
-	 * @param table table to be filled
-	 * @throws Exception
-	 */
-	private void initCharTable(String sqlQuery,
-			HashtableExt<Integer, Character> table) throws Exception {
-		Connection connect = null;
-		Statement statement = null;
-		ResultSet resultSet = null;
-
-		Class.forName("com.mysql.jdbc.Driver");
-		connect = DriverManager.getConnection("jdbc:mysql://localhost/GMOGA?"
-				+ "user=greshnikk&password=46w5w54s6");
-		statement = connect.createStatement();
-		resultSet = statement.executeQuery(sqlQuery);
-		while (resultSet.next()) {
-			table.put(resultSet.getInt(1), resultSet.getString(2).charAt(0));
-		}
 	}
 }
