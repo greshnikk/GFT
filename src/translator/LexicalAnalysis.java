@@ -106,6 +106,8 @@ public final class LexicalAnalysis {
 					GFT.setNumberTable(this.numberConstants);
 					return result;
 				}
+				if (currentChar == ')' && !isOperation (input.charAt(i)))
+						result += addMultiplyLexeme();
 				currentChar = input.charAt(i);
 				continue;
 			}
