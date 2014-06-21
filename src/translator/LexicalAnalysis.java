@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 public final class LexicalAnalysis {
 	private HashtableExt<Integer, String> charConstants = new HashtableExt<>();
-	private HashtableExt<Integer, Float> numberConstants = new HashtableExt<>();
+	private static HashtableExt<Integer, Float> numberConstants = new HashtableExt<>();
 	private HashtableExt<Integer, String> operations = new HashtableExt<>();
 	private HashtableExt<Integer, Character> separators = new HashtableExt<>();
 	private HashtableExt<Integer, String> identifiers = new HashtableExt<>();
@@ -39,6 +39,16 @@ public final class LexicalAnalysis {
 	 */
 	public void clearTables() {
 		numberConstants.clear();
+	}
+
+	public static float lexemeToFloat(String lexeme) throws Exception {
+		if (lexeme.startsWith("N")) {
+			return numberConstants.searchValue(Integer.parseInt(lexeme.substring(1)));
+		}
+		else if (lexeme.startsWith("C")) {
+			return GFT.getConstantValue(lexeme);
+		}
+		throw new Exception("Error: Can't translate " + lexeme + " to float.");
 	}
 
 	/**
@@ -106,8 +116,8 @@ public final class LexicalAnalysis {
 					GFT.setNumberTable(this.numberConstants);
 					return result;
 				}
-				if (currentChar == ')' && !isOperation (input.charAt(i)))
-						result += addMultiplyLexeme();
+				if (currentChar == ')' && !isOperation(input.charAt(i)))
+					result += addMultiplyLexeme();
 				currentChar = input.charAt(i);
 				continue;
 			}

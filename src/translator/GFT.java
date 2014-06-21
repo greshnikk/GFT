@@ -3,7 +3,6 @@ package translator;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 public class GFT {
@@ -91,6 +90,34 @@ public class GFT {
 		if (resultSet.next()) {
 			result = resultSet.getInt(1);
 		}
+		connect.close();
+		statement.close();
+		resultSet.close();
+		return result;
+	}
+
+	public static float getConstantValue(String lexeme) throws Exception {
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		float result = -1;
+
+		Class.forName("com.mysql.jdbc.Driver");
+		connect = DriverManager.getConnection("jdbc:mysql://localhost/GMOGA?"
+				+ "user=greshnikk&password=46w5w54s6");
+		statement = connect.createStatement();
+
+		if (lexeme.startsWith("C")) {
+			resultSet = statement
+					.executeQuery("Select value from GMOGA.constants where id = "
+							+ lexeme.substring(1));
+		}
+		if (resultSet.next()) {
+			result = resultSet.getFloat(1);
+		}
+		connect.close();
+		statement.close();
+		resultSet.close();
 		return result;
 	}
 
@@ -117,6 +144,9 @@ public class GFT {
 		while (resultSet.next()) {
 			table.put(resultSet.getInt(1), resultSet.getString(2));
 		}
+		connect.close();
+		statement.close();
+		resultSet.close();
 	}
 
 	/**
@@ -142,5 +172,8 @@ public class GFT {
 		while (resultSet.next()) {
 			table.put(resultSet.getInt(1), resultSet.getString(2).charAt(0));
 		}
+		connect.close();
+		statement.close();
+		resultSet.close();
 	}
 }
